@@ -1,11 +1,39 @@
 // import { motion } from "framer-motion";
 // import FadeIn from "./components/fadein";
 import BGM1 from "./assets/bgm1.jpg";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+// import { ComponentA, ComponentB } from "./components/text-infinite";
+
+import { AnimatePresence, motion } from "framer-motion";
+
+const titleAnimation = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const titleAnimationChildren = {
+  hidden: {
+    y: -100,
+  },
+  show: {
+    y: 0,
+    transition: {
+      ease: "easeInOut",
+    },
+  },
+};
 
 const Header = () => {
   const rowsRef = useRef<HTMLElement[]>([]);
+  const [isShowingA, setIsShowingA] = useState(true);
 
   useEffect(() => {
     if (rowsRef.current) {
@@ -31,6 +59,13 @@ const Header = () => {
     return () => {};
   }, []);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsShowingA((prev) => !prev);
+    }, 2000);
+    return () => clearTimeout(timeout);
+  }, [isShowingA]);
+
   return (
     <div className="relative">
       <div
@@ -42,6 +77,18 @@ const Header = () => {
           backgroundSize: "cover",
         }}
       >
+        <motion.div
+          variants={titleAnimation}
+          initial="hidden"
+          animate="show"
+          className="flex text-6xl font-bold text-[#e6951d] drop-shadow-lg z-50"
+        >
+          {Array.from("Gallery-Art").map((letter, idx) => (
+            <motion.span key={idx} variants={titleAnimationChildren}>
+              {letter}
+            </motion.span>
+          ))}
+        </motion.div>
         <div
           className="px-6 cb-traggel-row flex  whitespace-nowrap [writing-mode:vertical-lr]"
           ref={(el) => el && rowsRef.current?.push(el)}
